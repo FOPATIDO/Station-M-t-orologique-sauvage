@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion – Système Météorologique</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+
+    <div class="login-container">
+        <h1>Connexion</h1>
+        <p class="subtitle">
+            Accédez au système d’information météorologique
+        </p>
+
+        <form>
+            <div class="input-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" id="email" placeholder="exemple@mail.com" required>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit">Se connecter</button>
+        </form>
+
+        <p class="register-link">
+            Vous n’êtes pas encore inscrit ?
+            <a href="{% url 'register' %}">Inscrivez-vous</a>
+        </p>
+    </div>
+
+</body>
+</html>

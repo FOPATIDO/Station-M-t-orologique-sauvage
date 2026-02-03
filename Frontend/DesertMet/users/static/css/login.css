@@ -1,0 +1,102 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    height: 100vh;
+    /* background: linear-gradient(
+        rgba(0,0,0,0.6),
+        rgba(0,0,0,0.6)
+    ),
+    url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1600&q=80");
+    background-size: cover;
+    background-position: center; */
+ /* background-color: rgba(0, 0, 0, 0.55); */
+ background: linear-gradient(135deg, #2c3e50, #4ca1af);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Carte de connexion */
+.login-container {
+    background: rgba(255,255,255,0.95);
+    padding: 35px;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.subtitle {
+    font-size: 16px;
+    opacity: 0.85;
+    margin-bottom: 25px;
+    color: #2c3e50;
+  
+}
+
+/* Champs */
+.input-group {
+    text-align: left;
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    color: #2c3e50;
+}
+
+/* Bouton */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #2980b9;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color:  #1f6391;
+}
+
+/* Lien inscription */
+.register-link {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #2c3e50;
+   
+}
+
+.register-link a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}

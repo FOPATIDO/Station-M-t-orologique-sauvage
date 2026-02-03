@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Administrateur</title>
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <h1>🛠️ Dashboard Administrateur</h1>
+        <p class="subtitle">Gestion du système de stations météorologiques</p>
+
+        <div class="cards">
+
+            <a href="{% url 'gestion_station' %}" class="card">
+                <h2>Gestion des stations</h2>
+                <p>Ajouter, modifier ou supprimer des stations météorologiques</p>
+            </a>
+
+            <a href="{% url 'surveillance' %}" class="card">
+                <h2>Surveillance du système</h2>
+                <p>Suivi de l’état des stations, capteurs et communications</p>
+            </a>
+
+            <a href="{% url 'gestion_donnees' %}" class="card">
+                <h2>Gestion des données météo</h2>
+                <p>Consulter, analyser et archiver les données météorologiques</p>
+            </a>
+
+        </div>
+
+        <!-- Bouton retour -->
+        <div class="bottom-btn">
+            <a href="{% url 'home' %}" class="btn-home"> Retour à la page d’accueil</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

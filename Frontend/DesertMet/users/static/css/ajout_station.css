@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+     background: linear-gradient(135deg, #1d3557, #457b9d); 
+    /* background: linear-gradient(135deg, #2c3e50, #4ca1af);  */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: #ffffff;
+    width: 500px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1d3557;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.checkbox-group label {
+    font-weight: normal;
+    color: #555;
+}
+
+.btn-submit {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #1d3557;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-submit:hover {
+    background: #457b9d;
+}
+
+.btn-back {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #1d3557;
+    font-weight: 600;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}

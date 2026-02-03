@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une station</title>
+    <link rel="stylesheet" href="{% static 'css/ajout_station.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Ajouter une station météorologique</h1>
+
+    <form class="station-form">
+
+        <div class="form-group">
+            <label for="nom">Nom de la station</label>
+            <input type="text" id="nom" placeholder="Ex: Station Sahara Nord" required>
+        </div>
+
+        <div class="form-group">
+            <label for="localisation">Localisation</label>
+            <input type="text" id="localisation" placeholder="Ex: Désert du Sahara" required>
+        </div>
+
+        <div class="form-group">
+            <label>Capteurs disponibles</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox"> Température</label>
+                <label><input type="checkbox"> Pression</label>
+                <label><input type="checkbox"> Vent</label>
+                <label><input type="checkbox"> Précipitations</label>
+                <label><input type="checkbox"> Ensoleillement</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Énergie utilisée</label>
+            <select>
+                <option>Solaire</option>
+                <option>Batterie</option>
+                <option>Solaire + Batterie</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Communication</label>
+            <select>
+                <option>GSM / 4G</option>
+                <option>Satellite</option>
+                <option>Wi-Fi</option>
+                <option>LoRa</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Statut</label>
+            <select>
+                <option>Active</option>
+                <option>Inactive</option>
+                <option>Maintenance</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            Ajouter la station
+        </button>
+
+    </form>
+
+    <a href="{% url 'gestion_station' %}" class="btn-back">
+        Retour à la gestion des stations
+    </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+     background: url("../images/background.jpg") no-repeat center center/cover; 
+}
+
+/* Assombrir l’image */
+.overlay {
+     /* background-color: rgba(0, 0, 0, 0.35);  */
+     background: none;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #fff;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color:#ffffff;
+}
+
+header p {
+    font-size: 1.1rem;
+    font-weight:500;
+    opacity: 0.9;
+}
+
+/* Card centrale */
+.card {
+    background: rgba(255, 255, 255, 0.20); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); 
+    width: 90%;
+    max-width: 500px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.card h2 {
+    margin-bottom: 15px;
+    color:#5806db;
+}
+
+.card p {
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    line-height: 1.5;
+    color:#5806db;
+}
+
+/* Boutons */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.primary {
+    background-color: #4a09e0;
+    color: #000;
+}
+
+.primary:hover {
+    background-color: #3905b1;
+}
+
+.secondary {
+    background-color:  #4a09e0;
+    color: #000;
+}
+
+.secondary:hover {
+    background-color: #3905b1;
+    color: #000;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}

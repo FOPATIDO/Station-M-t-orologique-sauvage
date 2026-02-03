@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Stations</title>
+    <link rel="stylesheet" href="{% static 'css/gestion_station.css' %}">
+</head>
+<body>
+
+<header>
+    <h1>📡 Gestion des stations météorologiques</h1>
+    <p>Ajouter, modifier et supprimer les stations du système</p>
+</header>
+
+<main>
+
+    <!-- Bouton ajouter -->
+    <div class="top-actions">
+        <a href="{% url 'ajouter_station' %}" class="btn-add">➕ Ajouter une station</a>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom de la station</th>
+                    <th>Localisation</th>
+                    <th>Capteurs</th>
+                    <th>Énergie</th>
+                    <th>Communication</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Station Désert Nord</td>
+                    <td>Sahara Nord</td>
+                    <td>Température, Pression, Vent</td>
+                    <td>Solaire</td>
+                    <td>Satellite</td>
+                    <td class="status active">Active</td>
+                    <td>
+                        <a href="#" class="btn edit">Modifier</a>
+                        <a href="#" class="btn delete">Supprimer</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Station Désert Sud</td>
+                    <td>Sahara Sud</td>
+                    <td>Température, Vent</td>
+                    <td>Solaire</td>
+                    <td>GSM</td>
+                    <td class="status active">Active</td>
+                    <td>
+                        <a href="#" class="btn edit">Modifier</a>
+                        <a href="#" class="btn delete">Supprimer</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Station Oasis Est</td>
+                    <td>Oasis Est</td>
+                    <td>Température, Pluie, Ensoleillement</td>
+                    <td>Hybride</td>
+                    <td>Satellite</td>
+                    <td class="status maintenance">Maintenance</td>
+                    <td>
+                        <a href="#" class="btn edit">Modifier</a>
+                        <a href="#" class="btn delete">Supprimer</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Station Montagne Ouest</td>
+                    <td>Massif Ouest</td>
+                    <td>Température, Vent, Pression</td>
+                    <td>Batterie</td>
+                    <td>LoRa</td>
+                    <td class="status inactive">Inactive</td>
+                    <td>
+                        <a href="#" class="btn edit">Modifier</a>
+                        <a href="#" class="btn delete">Supprimer</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Station Zone Centrale</td>
+                    <td>Zone Désertique Centrale</td>
+                    <td>Température, Pression, Vent, Pluie</td>
+                    <td>Solaire</td>
+                    <td>GSM</td>
+                    <td class="status active">Active</td>
+                    <td>
+                        <a href="#" class="btn edit">Modifier</a>
+                        <a href="#" class="btn delete">Supprimer</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Retour -->
+    <div class="bottom-btn">
+        <a href="{% url 'admin' %}" class="btn-back"> Retour au dashboard admin</a>
+    </div>
+
+</main>
+
+</body>
+</html>

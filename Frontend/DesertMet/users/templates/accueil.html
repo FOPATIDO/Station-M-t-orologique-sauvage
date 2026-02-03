@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Système d’Information Météorologique</title>
+    <link rel="stylesheet" href="{% static 'css/accueil_meteo.css' %}">
+</head>
+<body>
+
+    <div class="overlay">
+        <header>
+            <h1>Station Météorologique Sauvage</h1>
+            <p>Système national de surveillance météorologique en zones isolées</p>
+        </header>
+
+        <main class="card">
+            <h2>Accès au système</h2>
+            <p>
+                Consultez les données météorologiques collectées à partir des stations
+                installées dans les régions de nature sauvage :
+                température, pression, vent, précipitations et ensoleillement.
+            </p>
+
+            <div class="buttons">
+                <a href="{% url 'login' %}" class="btn primary">Se connecter</a>
+                <a href="{% url 'view' %}" class="btn secondary">Voir les données météo</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2026 GIT-3 – Système Météorologique National</p>
+        </footer>
+    </div>
+
+</body>
+</html>

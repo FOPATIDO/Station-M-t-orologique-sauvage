@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Surveillance du système</title>
+    <link rel="stylesheet" href="{%static 'css/surveillence_systeme.css'%}">
+</head>
+<body>
+
+<header>
+    <h1>Surveillance du système</h1>
+    <p>État général des stations météorologiques</p>
+</header>
+
+<main class="dashboard">
+
+    <!-- Etat global -->
+    <section class="status-cards">
+        <div class="card success">
+            <h2>Systèmes actifs</h2>
+            <span>4 / 5</span>
+        </div>
+
+        <div class="card warning">
+            <h2>En maintenance</h2>
+            <span>1</span>
+        </div>
+
+        <div class="card danger">
+            <h2>Stations hors ligne</h2>
+            <span>0</span>
+        </div>
+    </section>
+
+    <!-- Tableau de surveillance -->
+    <section class="table-section">
+        <h2>Détails des stations</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Station</th>
+                    <th>Énergie</th>
+                    <th>Communication</th>
+                    <th>Niveau batterie</th>
+                    <th>Dernière transmission</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Sahara Nord</td>
+                    <td>Solaire</td>
+                    <td>Satellite</td>
+                    <td>85%</td>
+                    <td>02/02/2026 - 08:10</td>
+                    <td class="active">Active</td>
+                </tr>
+
+                <tr>
+                    <td>Désert Central</td>
+                    <td>Solaire + Batterie</td>
+                    <td>GSM / 4G</td>
+                    <td>62%</td>
+                    <td>02/02/2026 - 07:55</td>
+                    <td class="active">Active</td>
+                </tr>
+
+                <tr>
+                    <td>Oasis Est</td>
+                    <td>Solaire</td>
+                    <td>LoRa</td>
+                    <td>48%</td>
+                    <td>02/02/2026 - 06:40</td>
+                    <td class="maintenance">Maintenance</td>
+                </tr>
+
+                <tr>
+                    <td>Dune Sud</td>
+                    <td>Batterie</td>
+                    <td>Wi-Fi</td>
+                    <td>90%</td>
+                    <td>02/02/2026 - 08:05</td>
+                    <td class="active">Active</td>
+                </tr>
+
+                <tr>
+                    <td>Plateau Ouest</td>
+                    <td>Solaire</td>
+                    <td>Satellite</td>
+                    <td>76%</td>
+                    <td>02/02/2026 - 07:20</td>
+                    <td class="active">Active</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Bouton retour -->
+    <div class="back-button">
+        <a href="{% url 'admin' %}">Retour au dashboard admin</a>
+    </div>
+
+</main>
+
+</body>
+</html>
