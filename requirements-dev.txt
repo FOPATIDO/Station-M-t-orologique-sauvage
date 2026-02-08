@@ -1,0 +1,27 @@
+# CORE DEPENDENCIES - DesertMet Project
+# ======================================
+
+# Django Framework
+Django==4.2.0
+
+# PostgreSQL Database
+psycopg2-binary==2.9.9
+
+# Real-time features (WebSockets)
+channels==4.0.0
+channels-redis==4.1.0
+redis==5.0.1
+
+# Data export
+openpyxl==3.1.2
+reportlab==4.0.4
+
+# Security
+bcrypt==4.1.2
+cryptography==42.0.4
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3
+Pillow==10.0.1
+requests==2.31.0
