@@ -67,3 +67,9 @@ DESERMET/
 Python 3.8+
 PostgreSQL 12+
 Redis (optionnel pour WebSockets)
+```
+### 2. Cloner le projet
+```bash
+git clone https://github.com/FOPATIDO/Station-M-t-orologique-sauvage.git
+cd Station-M-t-orologique-sauvage
+```
