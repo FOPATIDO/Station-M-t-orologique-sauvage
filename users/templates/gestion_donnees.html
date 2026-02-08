@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des données météorologiques</title>
+    <link rel="stylesheet" href="{% static 'css/gestion_donees.css'%}">
+    <style>
+        /* Styles additionnels pour Django - sans changer le design */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        .admin-info {
+            text-align: right;
+        }
+        .admin-info p {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+        .admin-email {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .messages {
+            margin: 15px 0;
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-error, .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+        .stats-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            font-style: italic;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .data-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-active { background: #28a745; color: white; }
+        .status-maintenance { background: #ffc107; color: #212529; }
+        .status-panne { background: #dc3545; color: white; }
+        .numeric-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        .missing-data {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .filter-info {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+    </style>
+
+</head>
+<body>
+
+<header>
+    <h1>Gestion des données météorologiques</h1>
+    <p>Consultation et suivi des données collectées par les stations</p>
+</header>
+
+<!-- En-tête admin -->
+<div class="admin-header">
+    <div>
+        <h3 style="margin: 0;">Administrateur : {{ user.fullname }}</h3>
+        <p style="margin: 5px 0 0 0; color: #666;">
+            Gestion avancée des données météorologiques
+        </p>
+    </div>
+    <div class="admin-info">
+        <p>Email : <span class="admin-email">{{ user.email }}</span></p>
+        <p>Session valide pour 48 heures</p>
+    </div>
+</div>
+
+<main class="container">
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Statistiques -->
+    {% if stats %}
+    <div class="stats-box">
+        <div class="stat-item">
+            <div class="stat-value">{{ stats.total_releves|default:"0" }}</div>
+            <div class="stat-label">Relevés trouvés</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ stats.moyenne_temp|floatformat:1|default:"-" }}°C</div>
+            <div class="stat-label">Temp. moyenne</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ stats.max_temp|floatformat:1|default:"-" }}°C</div>
+            <div class="stat-label">Temp. max</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">{{ stats.min_temp|floatformat:1|default:"-" }}°C</div>
+            <div class="stat-label">Temp. min</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Informations sur les filtres -->
+    {% if filtres.station or filtres.date_debut or filtres.date_fin %}
+    <div class="filter-info">
+        <strong>Filtres actifs :</strong>
+        {% if filtres.station %}
+        {% with station_id=filtres.station %}
+        {% for station in stations %}
+        {% if station.id|stringformat:"s" == station_id %}
+        Station : <strong>{{ station.nom }}</strong>
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
+        {% endif %}
+        {% if filtres.date_debut %} | À partir du : <strong>{{ filtres.date_debut }}</strong>{% endif %}
+        {% if filtres.date_fin %} | Jusqu'au : <strong>{{ filtres.date_fin }}</strong>{% endif %}
+        <a href="{% url 'gestion_donnees' %}" style="margin-left: 10px; color: #007bff;">Supprimer les filtres</a>
+    </div>
+    {% endif %}
+
+    <!-- Filtres -->
+    <section class="filters">
+        <form method="GET" action="">
+            <select name="station">
+                <option value="">Toutes les stations</option>
+                {% for station in stations %}
+                <option value="{{ station.id }}" {% if filtres.station == station.id|stringformat:"s" %}selected{% endif %}>
+                    {{ station.nom }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <input type="date" name="date_debut" value="{{ filtres.date_debut|default:'' }}">
+            <input type="date" name="date_fin" value="{{ filtres.date_fin|default:'' }}">
+            <button type="submit">Filtrer</button>
+        </form>
+    </section>
+
+    <!-- Tableau des données RÉELLES -->
+    <section class="data-table">
+        {% if donnees %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Station</th>
+                    <th>Statut</th>
+                    <th>Température (°C)</th>
+                    <th>Pression (hPa)</th>
+                    <th>Vent (km/h)</th>
+                    <th>Précipitations (mm)</th>
+                    <th>Ensoleillement (W/m²)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for releve in donnees %}
+                <tr>
+                    <td>{{ releve.timestamp|date:"d/m/Y H:i" }}</td>
+                    <td>{{ releve.station.nom }}</td>
+                    <td>
+                        {% if releve.station.status == 'ACTIF' %}
+                            <span class="data-status status-active">●</span>
+                        {% elif releve.station.status == 'MAINTENANCE' %}
+                            <span class="data-status status-maintenance">●</span>
+                        {% elif releve.station.status == 'EN_PANNE' %}
+                            <span class="data-status status-panne">●</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.temperature %}
+                            {{ releve.temperature|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.pression %}
+                            {{ releve.pression|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.vitesse_vent %}
+                            {{ releve.vitesse_vent|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.precipitation %}
+                            {{ releve.precipitation|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.ensoleillement %}
+                            {{ releve.ensoleillement|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-data">
+            <h3>📊 Aucune donnée trouvée</h3>
+            <p>Aucune donnée ne correspond aux critères de recherche.</p>
+            <p>Essayez de modifier les filtres ou vérifiez que les stations sont actives.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Informations -->
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 14px;">
+        <p style="margin: 0;"><strong>ℹ️ Information :</strong>
+            Affichage limité aux 100 derniers relevés.
+            Les stations avec statut <span class="status-panne" style="padding: 2px 6px;">EN_PANNE</span>
+            ou <span class="status-maintenance" style="padding: 2px 6px;">MAINTENANCE</span>
+            n'envoient pas de données.
+        </p>
+    </div>
+
+    <!-- Boutons bas -->
+<div class="bottom-actions">
+    <!-- Formulaire d'export -->
+    <form method="POST" action="{% url 'export_donnees' %}" style="display: inline;">
+        {% csrf_token %}
+        <input type="hidden" name="station" value="{{ filtres.station|default:'' }}">
+        <input type="hidden" name="date_debut" value="{{ filtres.date_debut|default:'' }}">
+        <input type="hidden" name="date_fin" value="{{ filtres.date_fin|default:'' }}">
+        <button type="submit" class="export">📥 Exporter les données (TXT)</button>
+    </form>
+
+    <a href="{% url 'admin_dashboard'%}" class="back">← Retour au dashboard admin</a>
+</div>
+
+</main>
+    <!-- dashboard_users.html et autres -->
+{% load static %}
+
+<!-- Ajouter le CSS -->
+<link rel="stylesheet" href="{% static 'css/realtime.css' %}">
+
+<!-- Ajouter le JavaScript -->
+<script src="{% static 'js/satellite_realtime.js' %}"></script>
+
+<!-- Indicateur de connexion -->
+<div id="realtime-status" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+    <span class="realtime-indicator realtime-connected"></span>
+    <small>Données temps réel</small>
+</div>
+</body>
+</html>

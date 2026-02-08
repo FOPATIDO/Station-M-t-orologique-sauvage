@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Système d'Information Météorologique</title>
+    <link rel="stylesheet" href="{% static 'css/accueil_meteo.css' %}">
+</head>
+<body>
+
+    <div class="overlay">
+        <header>
+            <h1>Station Météorologique Sauvage</h1>
+            <p>Système national de surveillance météorologique en zones isolées</p>
+        </header>
+
+        <main class="card">
+            <h2>Accès au système</h2>
+            <p>
+                Consultez les données météorologiques collectées à partir des stations
+                installées dans les régions de nature sauvage :
+                température, pression, vent, précipitations et ensoleillement.
+            </p>
+
+            <!-- Affichage des messages Django -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="buttons">
+                <!-- Vérifier si l'utilisateur est déjà connecté -->
+                {% if user.is_authenticated %}
+                    {% if user.email|slice:"-13:" == "@DesertMet.com" %}
+                        <a href="{% url 'admin_dashboard' %}" class="btn primary">Accéder au Dashboard Admin</a>
+                    {% else %}
+                        <a href="{% url 'view' %}" class="btn primary">Accéder à mes données</a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="btn secondary">Se déconnecter</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn primary">Se connecter</a>
+                    <a href="{% url 'view' %}" class="btn secondary">Voir les données météo (invité)</a>
+                {% endif %}
+            </div>
+
+            <!-- Informations sur l'utilisateur connecté -->
+            {% if user.is_authenticated %}
+            <div class="user-info" style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">
+                <p style="margin: 0;">
+                    Connecté en tant que : <strong>{{ user.fullname }}</strong>
+                    <br><small>{{ user.email }}</small>
+                </p>
+            </div>
+            {% endif %}
+        </main>
+
+        <footer>
+            <p>© 2026 GIT-3 – Système Météorologique National</p>
+        </footer>
+    </div>
+
+</body>
+</html>

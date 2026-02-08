@@ -1,0 +1,210 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier une station</title>
+    <link rel="stylesheet" href="{% static 'css/ajout_station.css' %}">
+    <style>
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+        .messages {
+            margin: 15px 0;
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .page-title {
+            color: #17a2b8;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- En-tête admin -->
+    <div class="admin-header">
+        <div>
+            <h1 class="page-title">✏️ Modifier la station : {{ station.nom }}</h1>
+            <p style="margin: 5px 0 0 0; color: #666;">
+                ID: {{ station.id }} | Créée le: {{ station.date_creation|date:"d/m/Y" }}
+            </p>
+        </div>
+        <div>
+            <p>Administrateur : <strong>{{ user.fullname }}</strong></p>
+        </div>
+    </div>
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Formulaire de modification -->
+    <form method="POST" action="{% url 'modifier_station' station.id %}" class="station-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_nom">Nom de la station</label>
+            <input type="text"
+                   name="nom"
+                   id="id_nom"
+                   placeholder="Ex: Station Sahara Nord"
+                   value="{{ form_data.nom }}"
+                   required>
+        </div>
+
+        <!-- Coordonnées GPS -->
+        <div class="form-group">
+            <label>Localisation GPS</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label for="id_latitude">Latitude</label>
+                    <input type="number"
+                           name="latitude"
+                           id="id_latitude"
+                           step="0.000001"
+                           min="-90"
+                           max="90"
+                           placeholder="Ex: 23.456789"
+                           value="{{ form_data.latitude }}"
+                           required>
+                    <div style="font-size: 12px; color: #666;">Valeur entre -90 et +90</div>
+                </div>
+                <div>
+                    <label for="id_longitude">Longitude</label>
+                    <input type="number"
+                           name="longitude"
+                           id="id_longitude"
+                           step="0.000001"
+                           min="-180"
+                           max="180"
+                           placeholder="Ex: -12.345678"
+                           value="{{ form_data.longitude }}"
+                           required>
+                    <div style="font-size: 12px; color: #666;">Valeur entre -180 et +180</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Capteurs disponibles</label>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox"
+                           name="capteur_temperature"
+                           {% if form_data.capteur_temperature %}checked{% endif %}>
+                    Température
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_pression"
+                           {% if form_data.capteur_pression %}checked{% endif %}>
+                    Pression
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_vent"
+                           {% if form_data.capteur_vent %}checked{% endif %}>
+                    Vent
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_precipitation"
+                           {% if form_data.capteur_precipitation %}checked{% endif %}>
+                    Précipitations
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_ensoleillement"
+                           {% if form_data.capteur_ensoleillement %}checked{% endif %}>
+                    Ensoleillement
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_energie">Énergie utilisée</label>
+            <select name="energie" id="id_energie" required>
+                <option value="SOLAIRE" {% if form_data.energie == "SOLAIRE" %}selected{% endif %}>Solaire</option>
+                <option value="BATTERIE" {% if form_data.energie == "BATTERIE" %}selected{% endif %}>Batterie</option>
+                <option value="HYBRIDE" {% if form_data.energie == "HYBRIDE" %}selected{% endif %}>Solaire + Batterie (Hybride)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_communication">Communication</label>
+            <select name="communication" id="id_communication" required>
+                <option value="SATELLITE" {% if form_data.communication == "SATELLITE" %}selected{% endif %}>Satellite</option>
+                <option value="GSM" {% if form_data.communication == "GSM" %}selected{% endif %}>GSM / 4G</option>
+                <option value="LORA" {% if form_data.communication == "LORA" %}selected{% endif %}>LoRa</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_status">Statut</label>
+            <select name="status" id="id_status" required>
+                <option value="ACTIF" {% if form_data.status == "ACTIF" %}selected{% endif %}>Actif</option>
+                <option value="MAINTENANCE" {% if form_data.status == "MAINTENANCE" %}selected{% endif %}>Maintenance</option>
+                <option value="EN_PANNE" {% if form_data.status == "EN_PANNE" %}selected{% endif %}>En panne</option>
+            </select>
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                <strong>Note :</strong> Seules les stations avec statut "Actif" génèrent des données.
+            </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Informations sur cette station</h4>
+            <div style="font-size: 14px;">
+                <p><strong>ID unique :</strong> {{ station.id }}</p>
+                <p><strong>Créée le :</strong> {{ station.date_creation|date:"d/m/Y à H:i" }}</p>
+                <p><strong>Dernière modification :</strong> {{ station.date_mise_a_jour|date:"d/m/Y à H:i" }}</p>
+                <p><strong>Données météo :</strong> {{ station.donnees_meteo.count }} relevés associés</p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button type="submit" class="btn-submit" style="flex: 1;">
+                💾 Enregistrer les modifications
+            </button>
+            <a href="{% url 'gestion_station' %}" class="btn-back" style="flex: 1; text-align: center;">
+                Annuler
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

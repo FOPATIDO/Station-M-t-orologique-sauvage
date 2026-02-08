@@ -1,0 +1,61 @@
+/* users/static/css/realtime.css */
+.updated {
+    animation: highlight 1s ease;
+    background-color: #e8f5e8;
+    transition: background-color 0.5s ease;
+}
+
+@keyframes highlight {
+    0% { background-color: #ffffcc; }
+    100% { background-color: #e8f5e8; }
+}
+
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-active { background-color: #28a745; color: white; }
+.status-maintenance { background-color: #ffc107; color: #212529; }
+.status-panne { background-color: #dc3545; color: white; }
+
+.realtime-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    animation: pulse 2s infinite;
+}
+
+.realtime-connected { background-color: #28a745; }
+.realtime-disconnected { background-color: #dc3545; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.data-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* users/static/css/auto_refresh.css */
+#refresh-indicator {
+    animation: pulse 2s infinite;
+}
+
+#refresh-indicator:hover {
+    background: #0056b3 !important;
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}

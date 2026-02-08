@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard utilisateur - Données météo</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard_users.css' %}">
+    <style>
+        /* Styles additionnels pour Django - sans changer le design existant */
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .user-info p {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+        .user-email {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        .messages {
+            margin: 15px 0;
+            max-width: 100%;
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-error, .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            font-style: italic;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .data-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .status-active { background: #28a745; color: white; }
+        .status-maintenance { background: #ffc107; color: #212529; }
+        .status-panne { background: #dc3545; color: white; }
+        .numeric-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        .missing-data {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+    <!-- dashboard_users.html et autres -->
+{% load static %}
+
+<!-- Ajouter le CSS -->
+<link rel="stylesheet" href="{% static 'css/realtime.css' %}">
+
+<!-- Ajouter le JavaScript -->
+<script src="{% static 'js/satellite_realtime.js' %}"></script>
+
+<!-- Indicateur de connexion -->
+<div id="realtime-status" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+    <span class="realtime-indicator realtime-connected"></span>
+    <small>Données temps réel</small>
+</div>
+</head>
+<body>
+
+<header>
+    <h1>Tableau de bord météo</h1>
+    <p>Consultation des données météorologiques des stations</p>
+</header>
+
+<!-- En-tête utilisateur -->
+<div class="user-header">
+    <div>
+        <h3 style="margin: 0;">Bienvenue, {{ user.fullname }}</h3>
+        <p style="margin: 5px 0 0 0; color: #666;">
+            Accès aux données météorologiques en temps réel
+        </p>
+    </div>
+    <div class="user-info">
+        <p>Email : <span class="user-email">{{ user.email }}</span></p>
+        <p>Dernière connexion : {{ user.last_login|date:"d/m/Y H:i"|default:"Aujourd'hui" }}</p>
+        <a href="{% url 'logout' %}" class="logout-btn">Déconnexion</a>
+    </div>
+</div>
+
+<main class="container">
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Statistiques réelles -->
+    <section class="summary">
+        <div class="box">
+            <h3>Stations totales</h3>
+            <span>{{ total_stations|default:"0" }}</span>
+        </div>
+
+        <div class="box">
+            <h3>Stations actives</h3>
+            <span class="numeric-cell">{{ stations_actives|default:"0" }}</span>
+        </div>
+
+        <div class="box">
+            <h3>Données disponibles</h3>
+            <span class="numeric-cell">{{ derniers_releves|length|default:"0" }}</span>
+        </div>
+
+        <div class="box">
+            <h3>Dernière mise à jour</h3>
+            <span>{{ now|date:"H:i"|default:"--:--" }}</span>
+        </div>
+    </section>
+
+    <!-- Filtres simplifiés -->
+    <section class="filters">
+        <form method="GET" action="" style="display: flex; gap: 10px; align-items: center;">
+            <select name="station" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="">Toutes les stations</option>
+                {% for station in stations_favorites %}
+                <option value="{{ station.id }}" {% if request.GET.station == station.id|stringformat:'s' %}selected{% endif %}>
+                    {{ station.nom }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <input type="date" name="date" value="{{ request.GET.date|default:'' }}"
+                   style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+
+            <button type="submit" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Afficher
+            </button>
+        </form>
+    </section>
+
+    <!-- Tableau des données RÉELLES -->
+    <section class="data-table">
+        {% if derniers_releves %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Station</th>
+                    <th>Statut</th>
+                    <th>Température (°C)</th>
+                    <th>Pression (hPa)</th>
+                    <th>Vent (km/h)</th>
+                    <th>Précipitations (mm)</th>
+                    <th>Ensoleillement (W/m²)</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for releve in derniers_releves %}
+                <tr>
+                    <td>{{ releve.timestamp|date:"d/m/Y H:i" }}</td>
+                    <td>{{ releve.station.nom }}</td>
+                    <td>
+                        {% if releve.station.status == 'ACTIF' %}
+                            <span class="data-status status-active">● Actif</span>
+                        {% elif releve.station.status == 'MAINTENANCE' %}
+                            <span class="data-status status-maintenance">● Maintenance</span>
+                        {% elif releve.station.status == 'EN_PANNE' %}
+                            <span class="data-status status-panne">● Panne</span>
+                        {% else %}
+                            <span class="data-status">● {{ releve.station.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.temperature %}
+                            {{ releve.temperature|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.pression %}
+                            {{ releve.pression|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.vitesse_vent %}
+                            {{ releve.vitesse_vent|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.precipitation %}
+                            {{ releve.precipitation|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="numeric-cell">
+                        {% if releve.ensoleillement %}
+                            {{ releve.ensoleillement|floatformat:1 }}
+                        {% else %}
+                            <span class="missing-data">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-data">
+            <h3>📊 Aucune donnée disponible</h3>
+            <p>Les stations satellites n'ont pas encore envoyé de données.</p>
+            <p>Les relevés arrivent toutes les 10-20 secondes via satellite.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Informations système -->
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; font-size: 14px;">
+        <p style="margin: 0;"><strong>ℹ️ Information :</strong>
+            Données collectées en temps réel depuis {{ total_stations|default:"0" }} stations météorologiques.
+            <br>Seules les stations avec statut <span class="status-active" style="padding: 2px 6px;">Actif</span> envoient des données.
+        </p>
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="back-home">
+        <a href="{% url 'home' %}"> ← Retour à la page d'accueil</a>
+    </div>
+
+</main>
+
+</body>
+</html>

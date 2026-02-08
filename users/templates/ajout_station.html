@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une station</title>
+    <link rel="stylesheet" href="{% static 'css/ajout_station.css' %}">
+    <style>
+        /* Styles additionnels pour Django - sans changer le design */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .admin-info {
+            text-align: right;
+        }
+        .admin-info p {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+        .messages {
+            margin: 15px 0;
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+        .form-error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+        .error-field {
+            border-color: #dc3545 !important;
+            background-color: #fff8f8;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .coord-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .coord-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .coord-help {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- En-tête admin -->
+    <div class="admin-header">
+        <div>
+            <h1 style="margin: 0;">Ajouter une station météorologique</h1>
+            <p style="margin: 5px 0 0 0; color: #666;">
+                Formulaire de création d'une nouvelle station
+            </p>
+        </div>
+        <div class="admin-info">
+            <p>Administrateur : <strong>{{ user.fullname }}</strong></p>
+            <p style="font-size: 12px; color: #666;">Email : {{ user.email }}</p>
+        </div>
+    </div>
+
+    <!-- Messages Django -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Formulaire Django -->
+    <form method="POST" action="{% url 'ajouter_station' %}" class="station-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_nom" class="required">Nom de la station</label>
+            <input type="text"
+                   name="nom"
+                   id="id_nom"
+                   placeholder="Ex: Station Sahara Nord"
+                   value="{{ form.nom.value|default_if_none:'' }}"
+                   required
+                   class="{% if form.nom.errors %}error-field{% endif %}">
+            {% if form.nom.errors %}
+            <span class="form-error">{{ form.nom.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <!-- Coordonnées GPS -->
+        <div class="form-group">
+            <label class="required">Localisation GPS</label>
+            <div class="coord-group">
+                <div class="coord-item">
+                    <label for="id_latitude">Latitude</label>
+                    <input type="number"
+                           name="latitude"
+                           id="id_latitude"
+                           step="0.000001"
+                           min="-90"
+                           max="90"
+                           placeholder="Ex: 23.456789"
+                           value="{{ form.latitude.value|default_if_none:'' }}"
+                           required
+                           class="{% if form.latitude.errors %}error-field{% endif %}">
+                    <div class="coord-help">Valeur entre -90 et +90</div>
+                    {% if form.latitude.errors %}
+                    <span class="form-error">{{ form.latitude.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                <div class="coord-item">
+                    <label for="id_longitude">Longitude</label>
+                    <input type="number"
+                           name="longitude"
+                           id="id_longitude"
+                           step="0.000001"
+                           min="-180"
+                           max="180"
+                           placeholder="Ex: -12.345678"
+                           value="{{ form.longitude.value|default_if_none:'' }}"
+                           required
+                           class="{% if form.longitude.errors %}error-field{% endif %}">
+                    <div class="coord-help">Valeur entre -180 et +180</div>
+                    {% if form.longitude.errors %}
+                    <span class="form-error">{{ form.longitude.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Capteurs disponibles</label>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox"
+                           name="capteur_temperature"
+                           {% if form.capteur_temperature.value|default_if_none:True %}checked{% endif %}>
+                    Température
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_pression"
+                           {% if form.capteur_pression.value|default_if_none:True %}checked{% endif %}>
+                    Pression
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_vent"
+                           {% if form.capteur_vent.value|default_if_none:True %}checked{% endif %}>
+                    Vent
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_precipitation"
+                           {% if form.capteur_precipitation.value|default_if_none:True %}checked{% endif %}>
+                    Précipitations
+                </label>
+                <label>
+                    <input type="checkbox"
+                           name="capteur_ensoleillement"
+                           {% if form.capteur_ensoleillement.value|default_if_none:True %}checked{% endif %}>
+                    Ensoleillement
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_energie" class="required">Énergie utilisée</label>
+            <select name="energie"
+                    id="id_energie"
+                    required
+                    class="{% if form.energie.errors %}error-field{% endif %}">
+                <option value="SOLAIRE" {% if form.energie.value == "SOLAIRE" %}selected{% endif %}>Solaire</option>
+                <option value="BATTERIE" {% if form.energie.value == "BATTERIE" %}selected{% endif %}>Batterie</option>
+                <option value="HYBRIDE" {% if form.energie.value == "HYBRIDE" %}selected{% endif %}>Solaire + Batterie (Hybride)</option>
+            </select>
+            {% if form.energie.errors %}
+            <span class="form-error">{{ form.energie.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_communication" class="required">Communication</label>
+            <select name="communication"
+                    id="id_communication"
+                    required
+                    class="{% if form.communication.errors %}error-field{% endif %}">
+                <option value="SATELLITE" {% if form.communication.value == "SATELLITE" %}selected{% endif %}>Satellite</option>
+                <option value="GSM" {% if form.communication.value == "GSM" %}selected{% endif %}>GSM / 4G</option>
+                <option value="LORA" {% if form.communication.value == "LORA" %}selected{% endif %}>LoRa</option>
+            </select>
+            {% if form.communication.errors %}
+            <span class="form-error">{{ form.communication.errors.0 }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_status" class="required">Statut</label>
+            <select name="status"
+                    id="id_status"
+                    required
+                    class="{% if form.status.errors %}error-field{% endif %}">
+                <option value="ACTIF" {% if form.status.value == "ACTIF" %}selected{% endif %}>Actif</option>
+                <option value="MAINTENANCE" {% if form.status.value == "MAINTENANCE" %}selected{% endif %}>Maintenance</option>
+                <option value="EN_PANNE" {% if form.status.value == "EN_PANNE" %}selected{% endif %}>En panne</option>
+            </select>
+            {% if form.status.errors %}
+            <span class="form-error">{{ form.status.errors.0 }}</span>
+            {% endif %}
+            <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                <strong>Note :</strong> Seules les stations avec statut "Actif" génèrent des données.
+            </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">Règles importantes</h4>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>Le nom de la station doit être unique</li>
+                <li>Les coordonnées GPS doivent être valides</li>
+                <li>Seules les stations "Actives" envoient des données</li>
+                <li>Les capteurs cochés seront les seuls à collecter des données</li>
+            </ul>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            Ajouter la station
+        </button>
+
+    </form>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{% url 'gestion_station' %}" class="btn-back">
+            ← Retour à la gestion des stations
+        </a>
+        <br>
+        <a href="{% url 'admin_dashboard' %}" style="display: inline-block; margin-top: 10px; color: #666; font-size: 14px;">
+            Retour au dashboard admin
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

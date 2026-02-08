@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription | Station Météorologique</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <style>
+        /* Styles additionnels pour Django - sans changer le design */
+        .messages {
+            margin: 0 auto 20px auto;
+            max-width: 500px;
+        }
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            border: 1px solid transparent;
+        }
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border-color: #fcc;
+        }
+        .alert-success {
+            background-color: #efe;
+            color: #3a3;
+            border-color: #cfc;
+        }
+        .alert-warning {
+            background-color: #ffd;
+            color: #c90;
+            border-color: #ffc;
+        }
+        .form-error {
+            color: #c33;
+            font-size: 13px;
+            margin-top: 5px;
+            display: block;
+        }
+        .form-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            display: block;
+        }
+        .form-text.warning {
+            color: #c90;
+        }
+        .error-field {
+            border-color: #c33 !important;
+            background-color: #fee;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .card {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .requirements {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        .requirements ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .requirements li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>Inscription</h1>
+        <p>Créer un compte pour accéder aux données météorologiques</p>
+
+        <!-- Messages Django -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+        <!-- Formulaire Django -->
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_fullname">Nom complet</label>
+                <input type="text"
+                       name="fullname"
+                       id="id_fullname"
+                       placeholder="Votre nom complet"
+                       value="{{ form.fullname.value|default_if_none:'' }}"
+                       required
+                       class="{% if form.fullname.errors %}error-field{% endif %}">
+                {% if form.fullname.errors %}
+                <span class="form-error">{{ form.fullname.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_email">Email</label>
+                <input type="email"
+                       name="email"
+                       id="id_email"
+                       placeholder="exemple@email.com"
+                       value="{{ form.email.value|default_if_none:'' }}"
+                       required
+                       class="{% if form.email.errors %}error-field{% endif %}">
+                {% if form.email.errors %}
+                <span class="form-error">{{ form.email.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password1">Mot de passe</label>
+                <input type="password"
+                       name="password1"
+                       id="id_password1"
+                       placeholder="Minimum 8 caractères"
+                       required
+                       class="{% if form.password1.errors %}error-field{% endif %}">
+                {% if form.password1.errors %}
+                <span class="form-error">{{ form.password1.errors.0 }}</span>
+                {% endif %}
+                <span class="form-text">Le mot de passe doit contenir au moins 8 caractères.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password2">Confirmer le mot de passe</label>
+                <input type="password"
+                       name="password2"
+                       id="id_password2"
+                       placeholder="Répétez le mot de passe"
+                       required
+                       class="{% if form.password2.errors %}error-field{% endif %}">
+                {% if form.password2.errors %}
+                <span class="form-error">{{ form.password2.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn">S'inscrire</button>
+        </form>
+
+        <div class="link">
+            <p>Déjà un compte ?
+                <a href="{% url 'login' %}">Se connecter</a>
+            </p>
+            <p style="margin-top: 10px;">
+                <a href="{% url 'home' %}">← Retour à la page d'accueil</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

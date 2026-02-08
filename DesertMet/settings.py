@@ -19,13 +19,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+
+# Sécurité (en production, utilise des clés secrètes réelles !)
 SECRET_KEY = 'django-insecure-*ss#^s1u+q%!beat2cei6l^=xy**9!3qy&%(+)+g)29r5f^tk1'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True  # Mettre à False en production
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -37,8 +37,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',  # ← AJOUTER
     'users'
 ]
+
+# Configuration Channels
+ASGI_APPLICATION = 'DesertMet.asgi.application'
+
+# Configuration Redis pour Channels (en développement)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+# Ou en mémoire pour plus simple (sans Redis)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,12 +94,30 @@ WSGI_APPLICATION = 'DesertMet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+# Configuration de la base de données PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'desertmet_db',           # Nom de ta base de données
+        'USER': 'desertmet_user',         # Ton utilisateur PostgreSQL
+        'PASSWORD': '2006',  # À changer absolument !
+        'HOST': 'localhost',              # Ou l'adresse de ton serveur
+        'PORT': '5432',                   # Port par défaut de PostgreSQL
+        'OPTIONS': {
+            'client_encoding': 'UTF8',    # Forcer l'encodage UTF-8
+        }
     }
 }
+
+# Spécification du modèle utilisateur personnalisé
+AUTH_USER_MODEL = 'users.User'
+
+# Configuration des sessions (2 jours = 172800 secondes)
+SESSION_COOKIE_AGE = 172800
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
 
 
 # Password validation
@@ -103,9 +142,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
+
 
 USE_I18N = True
 
@@ -116,7 +156,45 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = (BASE_DIR, 'static/')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'users/static/'),
+                    ]
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# Configuration du logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'satellite_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/satellite_simulator.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'satellite_simulator': {
+            'handlers': ['satellite_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
